@@ -3,8 +3,10 @@ import requests
 import os
 import pdb
 import bs4
+import time
 import mysql.connector
 from datetime import date, datetime
+from selenium import webdriver
 
 load_dotenv(verbose=True)
 dbUser = os.getenv('dbUser')
@@ -15,23 +17,33 @@ conn = mysql.connector.connect(user=dbUser,database=db,password=dbPass,auth_plug
 cursor = conn.cursor()
 baseurl = 'https://www.foreflight.com'
 url = 'https://www.foreflight.com/about/careers/'
-page = requests.get(url)
 
-soup = bs4.BeautifulSoup(page.content,'html.parser')
+options = webdriver.ChromeOptions()
+options.add_argument('--ignore-certificate-errors')
+options.add_argument('--incognito')
+options.add_argument('--headless')
+driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver", chrome_options=options)
+driver.get(url)
+time.sleep(1)
+page = driver.page_source
+#print page
+soup = bs4.BeautifulSoup(page,'html.parser')
 divs = soup.find_all("div",class_="g1-flex4 g2-flex2 g3-flex4 inner-wrap-space")
-
+#print divs
+#pdb.set_trace()
 for div in divs:
     jobTitle = div.find('h3').text
     jobLocation =  div.find('div',class_='subtext').text
     link = div.find('a').get('href')
-    joblink =  baseurl + link
+    joblink =  url + link
     #print joblink
     jobpage = requests.get(joblink)
+    #pdb.set_trace()
     jobsoup = bs4.BeautifulSoup(jobpage.content,'html.parser')
     jdesc = max(jobsoup.find_all('div',class_='g1-flex4 g2-flex6 g3-flex12'),key=len).get_text()
     #jdescText = bs4.BeautifulSoup(jdesc,'html.parser').prettify()
     jobData = {
-                "URL":link,
+                "URL":joblink,
                 "jobTitle":jobTitle,
                 "jobLocation":jobLocation,
                 "lastUpdate":datetime.now().date(),

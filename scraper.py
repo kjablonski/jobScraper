@@ -1,16 +1,17 @@
 from dotenv import load_dotenv
 import requests
+import os
 import pdb
 import bs4
 import mysql.connector
 from datetime import date, datetime
 
-load_dotenv()
-dbUser = os.environ.get('dbUser')
+load_dotenv(verbose=True)
+dbUser = os.getenv('dbUser')
 db = os.environ.get('db')
-dbPass = os.eviron.get('dbPass')
+dbPass = os.getenv('dbPass')
 
-conn = mysql.connector.connect(user=dbUser,database=db,password=dbPass)
+conn = mysql.connector.connect(user=dbUser,database=db,password=dbPass,auth_plugin='mysql_native_password')
 cursor = conn.cursor()
 baseurl = 'https://www.foreflight.com'
 url = 'https://www.foreflight.com/about/careers/'
@@ -46,7 +47,7 @@ for div in divs:
     #pdb.set_trace()
     cursor.execute(add_job,jobData)
     conn.commit()
-    print jobTitle + ' - ' + jobLocation
+    print(jobTitle + ' - ' + jobLocation)
     #print jdesc
     
 cursor.close()

@@ -1,5 +1,5 @@
 CREATE TABLE `jobListings` (
-  URL varchar(50) NOT NULL,
+  URL varchar(255) NOT NULL,
   jobTitle varchar(45) DEFAULT NULL,
   jobLocation varchar(45) DEFAULT NULL,
   jobPostingDate date DEFAULT NULL,

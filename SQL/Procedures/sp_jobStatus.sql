@@ -1,5 +1,5 @@
 drop procedure if exists sp_jobStatus;
-DELIMITER //
+DELIMITER ||
 create PROCEDURE sp_jobStatus ()
 BEGIN
   UPDATE jobListings SET
@@ -8,5 +8,5 @@ BEGIN
   WHERE
     isactive = 1 and 
     jobLastUpdated <= adddate(CURRENT_DATE, INTERVAL -2 DAY);
-END //
+END ||
 DELIMITER ;

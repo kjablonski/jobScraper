@@ -55,8 +55,8 @@ for div in divs:
     cursor.execute(queryjob,(joblink,))
     add_job = ("INSERT INTO jobListings (URL,jobTitle,jobLocation,jobPostingDate,jobLastUpdated,jobDescription,isactive) Values (%(URL)s,%(jobTitle)s,%(jobLocation)s,%(jobPostingDate)s,%(lastUpdate)s,%(desc)s,%(isactive)s)")
     if cursor.fetchall()[0][0] == 1:
-        add_job = "UPDATE jobListings set jobLastUpdated = %s WHERE URL = %s and isactive = 1"
-        jobData = (datetime.now().date(),joblink)
+        add_job = "UPDATE jobListings set jobLastUpdated = %(jobPostingDate)s,jobDescription = %(desc)s WHERE URL = %(URL)s and isactive = 1"
+
     #pdb.set_trace()
     cursor.execute(add_job,jobData)
     conn.commit()

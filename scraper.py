@@ -52,11 +52,11 @@ for div in divs:
                 "isactive":1
               }
     queryjob = "SELECT count(*) as row_count from jobListings where URL = %s and isactive = 1"
-    cursor.execute(queryjob,(link,))
+    cursor.execute(queryjob,(joblink,))
     add_job = ("INSERT INTO jobListings (URL,jobTitle,jobLocation,jobPostingDate,jobLastUpdated,jobDescription,isactive) Values (%(URL)s,%(jobTitle)s,%(jobLocation)s,%(jobPostingDate)s,%(lastUpdate)s,%(desc)s,%(isactive)s)")
     if cursor.fetchall()[0][0] == 1:
         add_job = "UPDATE jobListings set jobLastUpdated = %s WHERE URL = %s and isactive = 1"
-        jobData = (datetime.now().date(),link)
+        jobData = (datetime.now().date(),joblink)
     #pdb.set_trace()
     cursor.execute(add_job,jobData)
     conn.commit()

@@ -3,5 +3,3 @@ CREATE OR REPLACE VIEW v_jobs AS
     *
   FROM
     jobListings
-  WHERE
-    isactive = 1

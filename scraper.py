@@ -8,18 +8,20 @@ import mysql.connector
 from datetime import date, datetime
 from selenium import webdriver
 
-#Load env variables for server side resources
+#Load env variables for sensitive resources
 load_dotenv(verbose=True)
 dbUser = os.getenv('dbUser')
 db = os.environ.get('db')
 dbPass = os.getenv('dbPass')
+userEmail = os.getenv('userEmail') or ''
+userRepo = os.getenv('userRepo') or ''
 
 #Setup SQL connection and web brower
 conn = mysql.connector.connect(user=dbUser,database=db,password=dbPass,auth_plugin='mysql_native_password')
 cursor = conn.cursor()
 baseurl = 'https://www.foreflight.com'
 url = 'https://www.foreflight.com/about/careers/'
-headerUserAgent = 'Python job board scraper bot; kevin.m.jablonski@gmail.com; https://github.com/kjablonski/jobScraper'
+headerUserAgent = 'Python job board scraper bot; ' + userEmail + '; ' + userRepo
 headers = {'User-Agent':headerUserAgent}
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')

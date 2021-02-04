@@ -61,6 +61,7 @@ for div in divs:
     cursor.execute(add_job,jobData)
     conn.commit()
     print(jobTitle + ' - ' + jobLocation)
+    time.sleep(7)
     #print jdesc
     
 cursor.close()

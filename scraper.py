@@ -19,7 +19,7 @@ conn = mysql.connector.connect(user=dbUser,database=db,password=dbPass,auth_plug
 cursor = conn.cursor()
 baseurl = 'https://www.foreflight.com'
 url = 'https://www.foreflight.com/about/careers/'
-headerUserAgent = 'Python job board scraper; kevin.m.jablonski@gmail.com; https://github.com/kjablonski/jobScraper'
+headerUserAgent = 'Python job board scraper bot; kevin.m.jablonski@gmail.com; https://github.com/kjablonski/jobScraper'
 headers = {'User-Agent':headerUserAgent}
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
@@ -70,7 +70,7 @@ for div in divs:
     #Create default SQL script to insert into job table
     add_job = ("INSERT INTO jobListings (URL,jobTitle,jobLocation,jobPostingDate,jobLastUpdated,jobDescription,isactive) Values (%(URL)s,%(jobTitle)s,%(jobLocation)s,%(jobPostingDate)s,%(lastUpdate)s,%(desc)s,%(isactive)s)")
     if cursor.fetchall()[0][0] == 1:
-        #We found a match overwrite the SQL command to update the date and description
+        #We found a match! Overwrite the SQL command to update the date and description
         add_job = "UPDATE jobListings set jobLastUpdated = %(jobPostingDate)s,jobDescription = %(desc)s WHERE URL = %(URL)s and isactive = 1"
 
     #Add the job data to the db

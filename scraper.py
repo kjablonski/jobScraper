@@ -8,6 +8,7 @@ import mysql.connector
 from datetime import date, datetime
 from selenium import webdriver
 import multiprocessing
+import stateAbbr
 
 def getJob(m_URL):
   #Load env variables for sensitive resources
@@ -30,6 +31,7 @@ def getJob(m_URL):
   
   jobTitle = jobsoup.select("h2.beta")[0].text
   jobLocation = jobsoup.select("div.zeta")[0].text
+  jobLocation = jobLocation.split(', ')[0] + ', ' + stateAbbr.name_to_abbr(jobLocation.split(', ')[1])
   jobDescription = jobsoup.find(id="career-detail").text
   #Package up all the job data to get ready for some SQL
   jobData = {
@@ -42,13 +44,13 @@ def getJob(m_URL):
                 "isactive":1
             }
   #See if we've already found this job or if it is new          
-  queryjob = "SELECT count(*) as row_count from jobListings where URL = %s and isactive = 1"
+  queryjob = "SELECT count(*) as row_count from jobListings where URL = %s"
   cursor.execute(queryjob,(m_URL,))
   #Create default SQL script to insert into job table
   add_job = ("INSERT INTO jobListings (URL,jobTitle,jobLocation,jobPostingDate,jobLastUpdated,jobDescription,isactive) Values (%(URL)s,%(jobTitle)s,%(jobLocation)s,%(jobPostingDate)s,%(lastUpdate)s,%(desc)s,%(isactive)s)")
   if cursor.fetchall()[0][0] == 1:
     #We found a match! Overwrite the SQL command to update the date and description
-    add_job = "UPDATE jobListings set jobLastUpdated = %(jobPostingDate)s,jobDescription = %(desc)s WHERE URL = %(URL)s and isactive = 1"
+    add_job = "UPDATE jobListings set jobLastUpdated = %(jobPostingDate)s,jobDescription = %(desc)s,isactive = 1 WHERE URL = %(URL)s"
 
   #Add the job data to the db
   cursor.execute(add_job,jobData)

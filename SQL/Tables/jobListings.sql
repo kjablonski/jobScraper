@@ -6,6 +6,7 @@ CREATE TABLE `jobListings` (
   jobLastUpdated date DEFAULT NULL,
   jobInactiveDate date DEFAULT NULL,
   jobDescription longtext,
+  company varchar(45) DEFAULT NULL,
   isactive tinyint DEFAULT NULL,
   PRIMARY KEY (URL)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8

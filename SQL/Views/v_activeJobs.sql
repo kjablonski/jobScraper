@@ -7,6 +7,7 @@ Select
   substring_index(jobLocation, ',',-1) as jobLocationState,
   jobPostingDate,
   jobLastUpdated,
-  jobDescription
+  jobDescription,
+  company
 from Jobs.jobListings
 where isactive

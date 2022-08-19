@@ -1,6 +1,6 @@
 # JobScraper
 
-JobScraper is a python script that scrapes the ForeFlight job board and stores the data in a SQL server
+JobScraper is a python script that scrapes the some job boards and stores the data in a SQL server
 
 ## Installation
 

@@ -82,9 +82,11 @@ def getJobFA(m_URL):
   driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver", chrome_options=options)
   conn = mysql.connector.connect(user=dbUser,database=db,password=dbPass,auth_plugin='mysql_native_password')
   cursor = conn.cursor()
-
-  print(m_URL)
-  driver.get(m_URL)
+  
+  job = m_URL[1]
+  jobUrl = m_URL[0]
+  print(jobUrl)
+  driver.get(jobUrl)
   time.sleep(2)
   fapage = driver.page_source
   driver.quit()
@@ -94,7 +96,7 @@ def getJobFA(m_URL):
   jobSec = fasoup.find_all('section',class_='position-info')
   faJobDesc = max(jobSec, key=len).get_text()
   jobData = {
-                "URL":m_URL,
+                "URL":jobUrl,
                 "jobTitle":job['title'],
                 "jobLocation":job['location'],
                 "jobPostingDate": datetime.now().date(),
@@ -105,7 +107,7 @@ def getJobFA(m_URL):
             }
   print(jobData)
   faqueryjob = "SELECT count(*) as row_count from jobListings where URL = %s and isactive = 1"
-  cursor.execute(faqueryjob,(m_URL,))
+  cursor.execute(faqueryjob,(jobUrl,))
   add_job = ("INSERT INTO jobListings (URL,jobTitle,jobLocation,jobPostingDate,jobLastUpdated,jobDescription,isactive) Values (%(URL)s,%(jobTitle)s,%(jobLocation)s,%(jobPostingDate)s,%(lastUpdate)s,%(desc)s,%(isactive)s)")
   if cursor.fetchall()[0][0] == 1:
     add_job = ("UPDATE jobListings set jobLastUpdated = %(jobPostingDate)s,jobDescription = %(desc)s,isactive = 1 WHERE URL = %(URL)s")
@@ -158,18 +160,12 @@ if __name__ == "__main__":
   
   #Create a process pool and attach the getJob function
   pool = multiprocessing.Pool()
-  pool.map(getJob, cleanLinks)
+  #pool.map(getJob, cleanLinks)
   
   fajobs = requests.get('https://flightaware.com/ajax/about/careers/get_positions.rvt').json()
   faBase = 'https://flightaware.com/about/careers/position/'
-  faLinks = [faBase + job['jobCode'] + '/' for job in fajobs['data']['jobs']]
- 
-  #Clean up any duplicates
-  faCleanLinks = []
-  for l in faLinks:
-    if l not in faCleanLinks:
-      faCleanLinks.append(l)
+  faData = [(faBase + job['jobCode'] + '/',job) for job in fajobs['data']['jobs']]
       
-  pool.map(getJobFA,faCleanLinks)
+  pool.map(getJobFA,faData)
   
   print("All Done!")
